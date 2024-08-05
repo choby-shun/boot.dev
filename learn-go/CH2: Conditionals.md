@@ -55,3 +55,19 @@ func getCreator(os string) string {
 }
 ```
 
+Go supports the standard `modulo operator`:
+```go
+7 % 3 // 1
+```
+
+The `AND` logical operator:
+```go
+true && false // false
+true && true // true
+```
+
+As well as the `OR` operator
+```go
+true || false // true
+false || false // false
+```
