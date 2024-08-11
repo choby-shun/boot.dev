@@ -16,3 +16,8 @@ An "import path" is a string used to import a package. A package's import path i
 - Each repository is typically a single module.
 - Each package consists of one or more Go source files in a single directory.
 
+The `go build command` compiles go code into a single, statically linked executable program. One of the beauties of Go is that you always go build for production, and because the output is a statically compiled binary, you can ship it to production or end users without them needing the Go toolchain installed.
+
+Some new Go devs use go run on a server in production, which is a huge mistake.
+
+The `go install command` compiles and installs a package or packages on your local machine for your personal usage. It installs the package's compiled binary in the GOBIN directory.
