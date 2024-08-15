@@ -30,7 +30,6 @@ The `<-` operator is called the `channel operator`. Data flows in the direction 
 
 #### Receive data from a channel
 ```go
-```go
 v := <-ch
 ```
 This reads and removes a value from the channel and saves it into the variable `v`. This operation will block until there is a value in the channel to be read.
@@ -40,7 +39,6 @@ A deadlock is when a group of goroutines are blocking so none of them can contin
 ```
 
 Empty structs are often used as a unary value. Sometimes, we don't care what is passed through a channel. We care when and if it is passed. This is a common pattern in Go.
-```go
 We can block and wait until something is sent on a channel using the following syntax:
 ```go
 <-ch
@@ -82,5 +80,81 @@ v, ok:= <-ch
 
 Do not send on a closed channel. Sending on a closed channel will cause a panic. A panic on the main goroutine will cause the entire program to crash, and a panic in any other gorouthine will case that goroutine to crash.
 
-Closing isn't necessary. 
+#### Range Over Channels
 
+```go
+for item := range ch {
+  // do something
+}
+```
+
+#### Select
+
+Sometimes we have a single goroutine listening to multiple channels, and want to process data in the order it comes through each channel. A `select` statement is used to listen to multiple channels at the same time. It is similar to a `switch` statement but for channels.
+
+```go
+select {
+case i, ok := <-chInts:
+  // do something
+case s, ok := <-chStrings:
+  // do something
+}
+```
+
+The first channel with a value ready to be received will fire and its body will executed. If multiple channels are ready, one will be chosen at random.
+The `ok`  varialble in the example above refers to whether or not the channel has been closed by the sender yet. 
+
+The `default` case is executed if no channels are ready to be received. It can stop the select statement from blocking.
+
+
+- `time.Tick()` is a standard library function that returns a channel that sends a value on a given interval.
+- `time.After()` sends a value once after the duration has passed.
+- `time.Sleep()` blocks the current goroutine for the specified amount of time.
+
+#### Readonly and Writeonly Channels
+A channel can be declared as read-only or write-only by specifying the direction of the channel when declaring it.
+```go
+func main () {
+  ch := make(chan int)
+  readCh(ch)
+}
+
+func readCh(ch <-chan int) {
+  // do something
+}
+```
+
+```go
+func writeCh(ch chan<- int) {
+  // do something
+}
+```
+
+
+A send to a nil channel blocks forever
+
+```go
+var c chan string // c is nil
+c <- "let's get started" // blocks
+```
+
+A receive from a nil channel blocks forever
+```go
+var c chan string // c is nil
+fmt.Println(<-c) // blocks
+```
+
+A send to a closed channel panics
+
+```go
+var c = make(chan int, 100)
+close(c)
+c <- 1 // panic: send on closed channel
+```
+
+A receive from a closed channel returns the zero value immediately
+```go
+var c = make(chan int, 100)
+close(c)
+fmt.Println(<-c) // 0
+```
