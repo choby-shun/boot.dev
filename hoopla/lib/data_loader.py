@@ -1,6 +1,9 @@
 import json
 from abc import ABC, abstractmethod
 
+MOVIE_PATH = "./data/movies.json"
+STOP_WORDS_PATH = "./data/stopwords.txt"
+
 
 class DataLoader(ABC):
     @abstractmethod
@@ -9,7 +12,7 @@ class DataLoader(ABC):
 
 
 class MovieDataLoader:
-    def __init__(self, path):
+    def __init__(self, path=MOVIE_PATH):
         self.path = path
 
     def load(self) -> list:
@@ -18,7 +21,7 @@ class MovieDataLoader:
 
 
 class StopwordsDataLoader:
-    def __init__(self, path):
+    def __init__(self, path=STOP_WORDS_PATH):
         self.path = path
 
     def load(self) -> list:

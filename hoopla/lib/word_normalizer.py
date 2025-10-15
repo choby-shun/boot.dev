@@ -4,14 +4,12 @@ from nltk.stem import PorterStemmer
 
 from hoopla.lib.data_loader import StopwordsDataLoader
 
-STOP_WORDS_PATH = "./data/stopwords.txt"
-
 
 class WordNormalizer:
-    def __init__(self, stop_word_fp: str = STOP_WORDS_PATH, stemmer=PorterStemmer()):
+    def __init__(self, stemmer=PorterStemmer()):
         self.chain = []
         self.stemmer = stemmer
-        self.stop_words = StopwordsDataLoader(stop_word_fp).load()
+        self.stop_words = StopwordsDataLoader().load()
 
     def remove_punc(self):
         def _remove_punc(text):

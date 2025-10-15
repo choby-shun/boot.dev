@@ -10,9 +10,8 @@ import argparse
 import json
 
 from hoopla.lib.data_loader import MovieDataLoader
+from hoopla.lib.inverted_index import InvertedIndex
 from hoopla.lib.keyword_search import keyword_search
-
-MOVIE_PATH = "./data/movies.json"
 
 
 def main() -> None:
@@ -22,9 +21,11 @@ def main() -> None:
     search_parser = subparsers.add_parser("search", help="Search movies using BM25")
     search_parser.add_argument("query", type=str, help="Search query")
 
+    search_parser = subparsers.add_parser("build", help="Build inverted index")
+
     args = parser.parse_args()
 
-    data_pool = MovieDataLoader(MOVIE_PATH).load()
+    data_pool = MovieDataLoader().load()
 
     match args.command:
         case "search":
@@ -35,6 +36,12 @@ def main() -> None:
 
         case "build":
             print(f"Building index")
+            index = InvertedIndex()
+            index.build()
+            index.save()
+
+            docs = index.get_documents("merida")
+            print(f"First document for token 'merida' = {docs[0]}")
 
         case _:
             parser.print_help()
