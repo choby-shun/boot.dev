@@ -9,9 +9,11 @@ class InvertedIndex:
     def __init__(self):
         # token to the doc_ids map
         self.index = {}
+        self.index_cache_fp = "cache/index.pkl"
 
         # doc_id to the tokens map
         self.docmap = {}
+        self.docmap_cache_fp = "cache/docmap.pkl"
 
         self.normalizer = WordNormalizer()
         self.movie_data_loader = MovieDataLoader()
@@ -39,8 +41,20 @@ class InvertedIndex:
         # Ensure cache directory exists
         os.makedirs("cache", exist_ok=True)
 
-        with open("cache/index.pkl", "wb") as f:
+        with open(self.index_cache_fp, "wb") as f:
             pickle.dump(self.index, f)
 
-        with open("cache/docmap.pkl", "wb") as f:
+        with open(self.docmap_cache_fp, "wb") as f:
             pickle.dump(self.docmap, f)
+
+    def load(self):
+        if not os.path.exists(self.index_cache_fp):
+            raise FileNotFoundError(f"Missing index cache file: {index_path}")
+        if not os.path.exists(self.docmap_cache_fp):
+            raise FileNotFoundError(f"Missing docmap cache file: {docmap_path}")
+
+        # Load both pickle files
+        with open(self.index_cache_fp, "rb") as f:
+            self.index = pickle.load(f)
+        with open(self.docmap_cache_fp, "rb") as f:
+            self.docmap = pickle.load(f)

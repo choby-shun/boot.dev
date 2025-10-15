@@ -26,22 +26,30 @@ def main() -> None:
     args = parser.parse_args()
 
     data_pool = MovieDataLoader().load()
+    data_dict = {doc["id"]: doc["title"] for doc in data_pool}
 
     match args.command:
         case "search":
             print(f"Searching for: {args.query}")
-            matches = keyword_search(data_pool, args.query)
-            for index, match in enumerate(matches):
-                print(f"{index}. Movie Title {match['title']}")
+
+            index = InvertedIndex()
+            index.load()
+
+            query = args.query.split()
+            result_found = 0
+            for query_token in query:
+                doc_ids = keyword_search(index, query_token)
+                for doc_id in doc_ids:
+                    if result_found == 5:
+                        break
+                    print(f"{doc_id}, title: {data_dict[doc_id]}")
+                    result_found += 1
 
         case "build":
             print(f"Building index")
             index = InvertedIndex()
             index.build()
             index.save()
-
-            docs = index.get_documents("merida")
-            print(f"First document for token 'merida' = {docs[0]}")
 
         case _:
             parser.print_help()
